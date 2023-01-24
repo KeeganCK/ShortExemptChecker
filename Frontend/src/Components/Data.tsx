@@ -15,9 +15,16 @@ export type Data = {
   price: string;
 };
 
+export type Stocks = {
+  symbol: string;
+  year: string;
+  month: string;
+  days: Array<string>;
+}
+
 const Data = () => {
   const [data, setData] = useState<Array<Data>>([]);
-  const [stocks, setStocks] = useState<Array<string>>([]);
+  const [stocks, setStocks] = useState<Array<Stocks>>([]);
   let url = "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20230123.txt";
 
   return (
