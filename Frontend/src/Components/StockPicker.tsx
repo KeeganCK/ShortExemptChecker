@@ -1,5 +1,5 @@
 import { Button, Form, Input, Select } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Stocks } from "./Data";
 import { Typography } from 'antd';
@@ -68,11 +68,6 @@ const StockPicker = (props: Props) => {
   const [numberofStocks, setNumberofStocks] = useState<Array<number>>([1]);
 
   const [form] = Form.useForm();
-  const stockAdder = useRef<any>(null);
-
-  useEffect(() => {
-    stockAdder.current.focus();
-  });
 
   const calculateDate = (end: string, start: string) => {
     const length = parseInt(end) - parseInt(start);
@@ -183,7 +178,6 @@ const StockPicker = (props: Props) => {
                 <Input
                   placeholder={`input stock symbol ${value}`}
                   allowClear
-                  ref={stockAdder}
                 />
               </MultiFormInput>
             ))}

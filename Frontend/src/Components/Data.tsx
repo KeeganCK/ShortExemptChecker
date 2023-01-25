@@ -113,7 +113,7 @@ const Data = () => {
           <CustomButton onClick={onGetData} type="primary" danger  loading={loading}>Get Data</CustomButton>
         </CenterDiv>
       )}
-      <Information filteredData={filteredData} changed={changed} loading={loading}/>
+      {filteredData.length > 0 &&<Information filteredData={filteredData} changed={changed} loading={loading}/>}
     </>
   );
 };

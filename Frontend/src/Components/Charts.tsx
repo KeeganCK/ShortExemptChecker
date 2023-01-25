@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import { Button, Form } from "antd";
+import { CenterDiv } from "./StockPicker";
 
 ChartJS.register(
   CategoryScale,
@@ -101,8 +102,8 @@ const Charts = ({ data }: Props) => {
             {
               label: props.s2,
               data: props.d2,
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              borderColor: "rgb(53, 162, 235)",
+              backgroundColor: "rgba(53, 162, 235, 0.5)",
               yAxisID: "y",
             },
           ],
@@ -117,8 +118,8 @@ const Charts = ({ data }: Props) => {
             {
               label: props.s3,
               data: props.d3,
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              borderColor: "rgb(47, 205, 47)",
+              backgroundColor: "rgba(47, 205, 47, 0.5)",
               yAxisID: "y",
             },
           ],
@@ -154,8 +155,8 @@ const Charts = ({ data }: Props) => {
               {
                 label: props.leftOverS,
                 data: props.leftOverD,
-                borderColor: "rgb(255, 99, 132)",
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
+                borderColor: "rgb(47, 205, 47)",
+              backgroundColor: "rgba(47, 205, 47, 0.5)",
                 yAxisID: "y",
               },
             ],
@@ -191,6 +192,8 @@ const Charts = ({ data }: Props) => {
             },
           ],
         });
+        setDataTwo(null);
+        setDataThree(null);
       }
     }
   };
@@ -270,7 +273,20 @@ const Charts = ({ data }: Props) => {
       tempLabelsTwo.length > 0 && tempLabelsThree.length > 0
         ? checkIfSame(tempLabelsTwo, tempLabelsThree)
         : false;
-    if (oneTwo) {
+
+    if (oneTwo && twoThree && oneThree) {
+      createData({
+        a1: tempLabelsOne,
+        d1: tempPercentsOne,
+        d2: tempPercentsTwo,
+        s1: symbolOne,
+        s2: symbolTwo,
+        d3: tempPercentsThree,
+        s3: symbolThree,
+        allDifferent: false,
+      });
+    }
+    else if (oneTwo) {
       createData({
         a1: tempLabelsOne,
         d1: tempPercentsOne,
@@ -282,7 +298,7 @@ const Charts = ({ data }: Props) => {
         leftOverS: symbolThree,
       });
     }
-    if (oneThree) {
+    else if (oneThree) {
       createData({
         a1: tempLabelsOne,
         d1: tempPercentsOne,
@@ -303,16 +319,6 @@ const Charts = ({ data }: Props) => {
         leftOverA: tempLabelsThree,
         leftOverD: tempPercentsThree,
         leftOverS: symbolThree,
-      });
-    } else if (oneTwo && twoThree) {
-      createData({
-        a1: tempLabelsOne,
-        d1: tempPercentsOne,
-        d2: tempPercentsTwo,
-        s1: symbolOne,
-        s2: symbolTwo,
-        d3: tempPercentsThree,
-        s3: symbolThree,
       });
     } else if (!oneTwo && !twoThree && !oneThree) {
       createData({
@@ -370,9 +376,11 @@ const Charts = ({ data }: Props) => {
 
   return (
     <>
-      <br />
-      {labelsOne.length > 0 && dataOne && 
-        <Button onClick={fixScale}>{fixed ? 'Natural Scale': 'Fix Scale'}</Button>
+      {labelsOne.length > 0 && dataTwo && 
+        <CenterDiv>
+          <div style={{margin: 0, marginTop: '5px'}}></div>
+          <Button onClick={fixScale}>{fixed ? 'Natural Scale': 'Fix Scale'}</Button>
+        </CenterDiv>
       }
       <br />
       {labelsOne.length > 0 && dataOne && (
