@@ -6,6 +6,7 @@ import { CenterDiv } from "./StockPicker";
 import { Typography } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { Radio } from "antd";
+import Charts from "./Charts";
 const { Title } = Typography;
 
 const { Column } = Table;
@@ -30,7 +31,7 @@ const TablesContainer = styled.div<TablesContainerProps>`
   ${(p) => (p.columns === 1 ? "grid-template-columns: 1fr" : "")};
   ${(p) => (p.columns === 2 ? "grid-template-columns: 1fr 1fr" : "")};
   ${(p) => (p.columns === 3 ? "grid-template-columns: 1fr 1fr 1fr" : "")};
-  @media(max-width: 900px) {
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -52,7 +53,7 @@ const Information = (props: Props) => {
   const [dataOne, setDataOne] = useState<DataType[]>([]);
   const [dataTwo, setDataTwo] = useState<DataType[]>([]);
   const [dataThree, setDataThree] = useState<DataType[]>([]);
-  const [chart, setChart] = useState<boolean>(false);
+  const [view, setView] = useState<string>("charts");
 
   useEffect(() => {
     for (let i = 0; i < props.filteredData.length; i++) {
@@ -73,20 +74,32 @@ const Information = (props: Props) => {
   }, [props.changed]);
 
   const changeView = ({ target: { value } }: RadioChangeEvent) => {
-    setChart(value === "charts" ? true : false);
+    setView(value);
   };
 
   return (
     <>
       <CenterDiv>
         <Title level={3}>Results</Title>
-        <Radio.Group onChange={changeView}>
-          <Radio.Button value="tables">Tables</Radio.Button>
+        <Radio.Group value={view} onChange={changeView}>
           <Radio.Button value="charts">Charts</Radio.Button>
+          <Radio.Button value="tables">Tables</Radio.Button>
         </Radio.Group>
       </CenterDiv>
-      {chart ? (
-        <StockListDiv></StockListDiv>
+      {view === "charts" ? (
+        <>
+          {props.loading ? (
+            <TablesContainer columns={1}>
+              <Skeleton />
+            </TablesContainer>
+          ) : (
+            <StockListDiv>
+              {props.filteredData.length > 0 && (
+                <Charts data={props.filteredData} />
+              )}
+            </StockListDiv>
+          )}
+        </>
       ) : (
         <StockListDiv>
           {props.loading ? (

@@ -1,15 +1,13 @@
 import { Button } from "antd";
-import { setMaxIdleHTTPParsers } from "http";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { getOriginalNode } from "typescript";
-import Charts from "./Charts";
 import Information from "./Information";
 import StockPicker, { CenterDiv } from "./StockPicker";
 import StocksPicked from "./StocksPicked";
 
 const CustomButton = styled(Button)`
-  margin: 0.75em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0;
 `;
 
 const FormInfoContainer = styled.div`
@@ -51,12 +49,10 @@ export type Data = {
 
 
 const Data = () => {
-  const [data, setData] = useState<Array<Data>>([]);
   const [stocks, setStocks] = useState<Array<Stocks>>([]);
   const [changed, setChanged] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<Array<Data>>([]);
-  // let url = "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20230123.txt";
 
   const onGetData = async () => {
     let tempArray: Array<Data> = []
@@ -114,11 +110,10 @@ const Data = () => {
     </FormInfoContainer>
       {stocks.length > 0 && (
         <CenterDiv>
-          <CustomButton onClick={onGetData} size={"small"}>Get Data</CustomButton>
+          <CustomButton onClick={onGetData} type="primary" danger  loading={loading}>Get Data</CustomButton>
         </CenterDiv>
       )}
       <Information filteredData={filteredData} changed={changed} loading={loading}/>
-      <Charts data={data} />
     </>
   );
 };
