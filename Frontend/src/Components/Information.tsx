@@ -1,55 +1,147 @@
-import { Table } from "antd";
+import { Skeleton, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Stocks } from "./Data";
+import { Data, Stocks } from "./Data";
+import { CenterDiv } from "./StockPicker";
+import { Typography } from "antd";
+import type { RadioChangeEvent } from "antd";
+import { Radio } from "antd";
+const { Title } = Typography;
 
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
-const StockListDiv = styled.div``;
+type TablesContainerProps = {
+  columns: number;
+};
+
+const StockListDiv = styled.div`
+  width: 47.5%;
+  @media (max-width: 1900px) {
+    width: 100%;
+  }
+`;
 
 const CustomTable = styled(Table)`
-  margin: 0.75em 0;
+  margin: 0.75em 0.75em;
+`;
+
+const TablesContainer = styled.div<TablesContainerProps>`
+  display: grid;
+  ${(p) => (p.columns === 1 ? "grid-template-columns: 1fr" : "")};
+  ${(p) => (p.columns === 2 ? "grid-template-columns: 1fr 1fr" : "")};
+  ${(p) => (p.columns === 3 ? "grid-template-columns: 1fr 1fr 1fr" : "")};
+  @media(max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 type Props = {
-  stocks: Array<Stocks>;
+  filteredData: Array<Data>;
+  changed: number;
+  loading: boolean;
 };
 
 interface DataType {
   key: React.Key;
   symbol: string;
-  dates: string;
+  date: string;
+  percentage: string;
 }
 
 const Information = (props: Props) => {
-  const [data, setData] = useState<DataType[]>([]);
+  const [dataOne, setDataOne] = useState<DataType[]>([]);
+  const [dataTwo, setDataTwo] = useState<DataType[]>([]);
+  const [dataThree, setDataThree] = useState<DataType[]>([]);
+  const [chart, setChart] = useState<boolean>(false);
+
   useEffect(() => {
-    const tempData = [];
-    for (let i = 0; i < props.stocks.length; i++) {
-      const tempObject: DataType = {
-        key: i + 1,
-        symbol: props.stocks[i].symbol,
-        dates: `${props.stocks[i].year}-${props.stocks[i].month}-${
-          props.stocks[i].days[0]
-        } to ${props.stocks[i].year}-${props.stocks[i].month}-${
-          props.stocks[i].days[props.stocks[i].days.length - 1]
-        }`,
-      };
-      tempData.push(tempObject);
+    for (let i = 0; i < props.filteredData.length; i++) {
+      const tempData = [];
+      for (let j = 0; j < props.filteredData[i].data.length; j++) {
+        const tempObject: DataType = {
+          key: j + 1,
+          symbol: props.filteredData[i].symbol,
+          date: props.filteredData[i].data[j].date,
+          percentage: props.filteredData[i].data[j].percentage,
+        };
+        tempData.push(tempObject);
+      }
+      if (i === 0) setDataOne(tempData.reverse());
+      else if (i === 1) setDataTwo(tempData.reverse());
+      else setDataThree(tempData.reverse());
     }
-    setData(tempData);
-  }, [props.stocks]);
+  }, [props.changed]);
+
+  const changeView = ({ target: { value } }: RadioChangeEvent) => {
+    setChart(value === "charts" ? true : false);
+  };
 
   return (
-    <StockListDiv>
-      {props.stocks.length > 0 && (
-        <CustomTable dataSource={data} pagination={false}>
-          <Column title="key" dataIndex="key" key="key" />
-          <Column title="symbol" dataIndex="symbol" key="symbol" />
-          <Column title="dates" dataIndex="dates" key="dates" />
-        </CustomTable>
+    <>
+      <CenterDiv>
+        <Title level={3}>Results</Title>
+        <Radio.Group onChange={changeView}>
+          <Radio.Button value="tables">Tables</Radio.Button>
+          <Radio.Button value="charts">Charts</Radio.Button>
+        </Radio.Group>
+      </CenterDiv>
+      {chart ? (
+        <StockListDiv></StockListDiv>
+      ) : (
+        <StockListDiv>
+          {props.loading ? (
+            <TablesContainer columns={1}>
+              <Skeleton />
+            </TablesContainer>
+          ) : (
+            <TablesContainer columns={props.filteredData.length}>
+              {props.filteredData.length > 0 && dataOne.length > 0 && (
+                <CustomTable
+                  dataSource={dataOne}
+                  pagination={false}
+                  size="small"
+                >
+                  <Column title="Date" dataIndex="date" key="date" />
+                  <Column
+                    title={dataOne[0].symbol}
+                    dataIndex="percentage"
+                    key="percentage"
+                  />
+                </CustomTable>
+              )}
+              {props.filteredData.length > 0 && dataTwo.length > 0 && (
+                <CustomTable
+                  dataSource={dataTwo}
+                  pagination={false}
+                  size="small"
+                >
+                  <Column title="Date" dataIndex="date" key="date" />
+                  <Column
+                    title={dataTwo[0].symbol}
+                    dataIndex="percentage"
+                    key="percentage"
+                  />
+                </CustomTable>
+              )}
+              {props.filteredData.length > 0 && dataThree.length > 0 && (
+                <CustomTable
+                  dataSource={dataThree}
+                  pagination={false}
+                  size="small"
+                >
+                  <Column title="Date" dataIndex="date" key="date" />
+                  <Column
+                    title={dataThree[0].symbol}
+                    dataIndex="percentage"
+                    key="percentage"
+                  />
+                </CustomTable>
+              )}
+            </TablesContainer>
+          )}
+        </StockListDiv>
       )}
-    </StockListDiv>
+    </>
   );
 };
 
